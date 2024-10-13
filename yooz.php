@@ -1,13 +1,11 @@
 <?php
 /*
- * Plugin Name:       yooz ai chatbot
- * Version:           1
- * Requires PHP:      7.2
- * Author:            yooz
- * Author URI:        https://yooz.run/
- * Update URI:        https://example.com/my-plugin/
- * Domain Path:       /languages
- * Description:       یوز یک زبان نشانه گذاری هوش مصنوعی است که میتوایند با آن یک چت بات هوش مصنوعی برای سایت خود بسازید . با فعالسازی این افزونه یک گزینه چت در سایت خود مشاهده خواهدی کرد که اطلاعات گفتگوی خود را از پنل ادمین شما می گیرد
+ * Plugin Name: Yooz AI Chatbot
+ * Version: 1.0
+ * Requires PHP: 7.2
+ * Author: yooz
+ * Author URI: https://yooz.run/
+ * Description: یوز یک زبان نشانه گذاری هوش مصنوعی است که میتوایند با آن یک چت بات هوش مصنوعی برای سایت خود بسازید . با فعالسازی این افزونه یک گزینه چت در سایت خود مشاهده خواهدی کرد که اطلاعات گفتگوی خود را از پنل ادمین شما می گیرد
  */
 function get_default_chat_icons() {
     return array(
@@ -212,7 +210,8 @@ function my_chat_plugin_page_content() {
         $yooz_code = $i_code ; 
     }
 
-    // بارگذاری تنظیمات تب شخصی‌سازی
+    // Loading setting Custom Tab
+
     $button_color = get_option('my_chat_plugin_button_color', '#0073aa');
     $initial_question = get_option('my_chat_plugin_initial_question', 'سوالی بپرسید تا جواب بدم');
     $icons = get_default_chat_icons();
@@ -245,7 +244,7 @@ function my_chat_plugin_page_content() {
             </form>
         </div>
         
-        <!-- تب شخصی سازی -->
+        <!-- Custom Tab -->
         <div id="tab-2" class="tab-content" style="display: none;">
             <form method="post" action="options.php">
                 <?php
@@ -283,21 +282,23 @@ function my_chat_plugin_page_content() {
     <?php
 }
 
-
-
-
 function my_chat_plugin_enqueue_admin_scripts($hook_suffix) {
-  // بارگذاری استایل و اسکریپت‌های مربوط به color picker
+
+  // Loading Style and Scripts related to color picker
+
   wp_enqueue_style('wp-color-picker');
-  wp_enqueue_script('my-chat-plugin-color-picker', plugin_dir_url(__FILE__) . 'admin-script.js', array('wp-color-picker'), false, true);
+  wp_enqueue_script('my-chat-plugin-color-picker', plugin_dir_url(__FILE__) . 'js/admin-script.js', array('wp-color-picker'), false, true);
 }
 add_action('admin_enqueue_scripts', 'my_chat_plugin_enqueue_admin_scripts');
 
 function my_chat_plugin_enqueue_code_editor() {
-  // بارگذاری استایل و اسکریپت‌های کد ادیتور
+
+  // Loading Style and Scripts for CodeEditor
+
   wp_enqueue_code_editor(array('type' => 'text/javascript'));
 
-  // فعال کردن CodeMirror برای تکست ایریا
+  // Enable CodeMirror for Textarea
+
   wp_add_inline_script(
       'code-editor',
       'jQuery(function($){
@@ -315,18 +316,21 @@ function my_chat_plugin_enqueue_code_editor() {
 }
 add_action('admin_enqueue_scripts', 'my_chat_plugin_enqueue_code_editor');
 function my_chat_plugin_register_settings() {
-    // ثبت تنظیمات تب کدها
+
+    // Register the Codes Tab Settings
+
     register_setting('my_chat_plugin_code_settings', 'my_chat_plugin_text');
 
-    // ثبت تنظیمات تب شخصی‌سازی
+    // Register the customization Tab Settings
+
     register_setting('my_chat_plugin_customization_settings', 'my_chat_plugin_button_color');
     register_setting('my_chat_plugin_customization_settings', 'my_chat_plugin_initial_question');
     register_setting('my_chat_plugin_customization_settings', 'my_chat_plugin_button_icon');
 }
 add_action('admin_init', 'my_chat_plugin_register_settings');
 function my_social_button_enqueue_scripts() {
-    wp_enqueue_style('my-social-button-style', plugin_dir_url(__FILE__) . 'style.css');
-    wp_enqueue_script('my-social-button-script', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), null, true);
+    wp_enqueue_style('my-social-button-style', plugin_dir_url(__FILE__) . 'css/style.css');
+    wp_enqueue_script('my-social-button-script', plugin_dir_url(__FILE__) . 'js/script.js', array('jquery'), null, true);
 
     $input_code = get_option('my_chat_plugin_text');
     $button_color = get_option('my_chat_plugin_button_color', '#0073aa');
@@ -334,13 +338,13 @@ function my_social_button_enqueue_scripts() {
     
     $selected_icon = get_option('my_chat_plugin_button_icon', 'icon1');
     $icons = get_default_chat_icons();
-    $button_icon_url = isset($icons[$selected_icon]) ? $icons[$selected_icon] : $icons['icon1']; // آیکن انتخاب شده
+    $button_icon_url = isset($icons[$selected_icon]) ? $icons[$selected_icon] : $icons['icon1']; // Icon selected
 
     wp_localize_script('my-social-button-script', 'myChatPluginData', array(
         'inputCode' => $input_code,
         'buttonColor' => $button_color,
         'initialQuestion' => $initial_question,
-        'buttonIconUrl' => $button_icon_url // ارسال URL آیکن به جاوا اسکریپت
+        'buttonIconUrl' => $button_icon_url // Send Icon URL to Javascript
     ));
 }
 add_action('wp_enqueue_scripts', 'my_social_button_enqueue_scripts');
